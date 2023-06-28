@@ -3,7 +3,7 @@ from sintatico.parser import Parser
 from sintatico.tradutor import Tradutor
 
 if __name__ == '__main__':
-    file_code_fonts = ['ex_1.md', 'ex_2.md', 'ex_3.md', 'ex_4.md', 'ex_5.md']
+    file_code_fonts = ['exemplos.md']
 
     for file_code_font in file_code_fonts: 
         # Lexical analysis

@@ -26,6 +26,7 @@ class Tradutor:
     def program(self):
         self.declaration()
         while self.current_token is not None:
+            self.py_code +="\n"
             self.declaration()
 
     def declaration(self):
@@ -57,6 +58,7 @@ class Tradutor:
         
         self.parameters()
        # print('identifie', self.current_token[1])
+       
         self.consume('delimiter', ')')
         self.py_code += ")"
         self.block()
@@ -66,11 +68,13 @@ class Tradutor:
         self.py_code += parametro
         if self.current_token[0] == 'identifier':
             self.consume('identifier')
-            
-            self.py_code += " , "
+            print('oi')
+
         while self.current_token[0] == 'delimiter' and self.current_token[1] == ',':
             self.consume('delimiter')
+            
             parametro = self.current_token[1]
+            self.py_code += " , "
             self.py_code += parametro
             self.consume('identifier')
   
@@ -144,6 +148,7 @@ class Tradutor:
                 #print('agora n ne ')
                 self.py_code += "\nelse"
                 self.statement()
+        self.py_code_aux = " "
 
     def printStmt(self):
         self.consume('keyword', 'print')
@@ -151,6 +156,7 @@ class Tradutor:
         self.expression()
         self.py_code += ")"
         self.consume('delimiter', ';')
+        
 
     def returnStmt(self):
         self.consume('keyword', 'return')
@@ -170,10 +176,8 @@ class Tradutor:
     def block(self):
         self.consume('delimiter', '{')
         #print('aq')
-        
         self.py_code += ":\n\t"
         while self.current_token[0] != 'delimiter' or self.current_token[1] != '}':
-            self.py_code += "    "  # Adiciona quatro espaços de indentação
             self.declaration()
         self.consume('delimiter', '}')
         self.py_code += "\n"
@@ -187,7 +191,10 @@ class Tradutor:
 
     def assignment(self):
         if self.current_token[0] == 'identifier':
-            self.py_code += self.current_token[1]
+            if self.current_token[1] == 'nil':
+                self.py_code += "None"
+            else:
+                self.py_code += self.current_token[1]
             self.consume('identifier')
             if self.current_token[0] == 'operator' and self.current_token[1] == '=':
                 self.py_code += " = "
@@ -264,13 +271,16 @@ class Tradutor:
                 self.consume('delimiter', '.')
                 self.consume('identifier')
 
+
         
 
     def primary(self):
         if self.current_token[0] == 'keyword' and (
                 self.current_token[1] == 'true' or self.current_token[1] == 'false' or
                 self.current_token[1] == 'nil' or self.current_token[1] == 'this'):
+ 
             self.py_code += self.current_token[1]
+            
             self.consume('keyword')
 
         elif self.current_token[0] == 'integer':
@@ -283,11 +293,14 @@ class Tradutor:
             self.py_code += self.current_token[1]
             self.consume('identifier')
         elif self.current_token[0] == 'delimiter' and self.current_token[1] == '(':
+            print('aqui deve add')
+            self.py_code += "("
             self.consume('delimiter', '(')
             self.expression()
             if self.current_token[0] == 'delimiter' and self.current_token[1] == ',':
                 self.arguments()
             self.consume('delimiter', ')')
+            self.py_code += ")"
         elif self.current_token[0] == 'keyword' and self.current_token[1] == 'super':
             self.consume('keyword', 'super')
             self.consume('operator', '.')
@@ -296,6 +309,7 @@ class Tradutor:
     def arguments(self):
         self.expression()
         while self.current_token[0] == 'delimiter' and self.current_token[1] == ',':
+            
             self.consume('delimiter', ',')
             self.py_code += " , "
             self.expression()
