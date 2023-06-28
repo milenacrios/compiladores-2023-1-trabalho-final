@@ -193,8 +193,8 @@ class Parser:
     else:
       self.call()
 
-  def call(self):
-    self.primary() 
+  def call(self): 
+    self.primary()
     while ((self.current_token[0] == 'delimiter' and self.current_token[1] == '(') or (self.current_token[0] == 'delimiter' and self.current_token[1] == '.')):
       if self.current_token[0] == 'delimiter' and self.current_token[1] == '(':
         self.consume('delimiter', '(')
@@ -205,7 +205,6 @@ class Parser:
         self.consume('delimiter', '.')
         self.consume('identifier')
     
-
           
   def primary(self): 
     if self.current_token[0] == 'keyword' and (self.current_token[1] == 'true' or self.current_token[1] == 'false' or
@@ -221,6 +220,8 @@ class Parser:
     elif self.current_token[0] == 'delimiter' and self.current_token[1] == '(':
       self.consume('delimiter', '(')
       self.expression()
+      if self.current_token[0] == 'delimiter' and self.current_token[1] == ',':
+        self.arguments()
       self.consume('delimiter', ')')
     elif self.current_token[0] == 'keyword' and self.current_token[1] == 'super':
       self.consume('keyword', 'super')
